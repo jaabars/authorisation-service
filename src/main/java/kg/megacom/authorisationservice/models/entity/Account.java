@@ -2,13 +2,11 @@ package kg.megacom.authorisationservice.models.entity;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
+@Table(name = "accounts")
 public class Account {
 
     @Id
@@ -16,5 +14,4 @@ public class Account {
     private Long id;
     private String login;
     private String password;
-    private boolean is_active;
 }

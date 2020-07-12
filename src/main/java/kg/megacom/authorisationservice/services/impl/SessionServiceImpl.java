@@ -1,6 +1,5 @@
 package kg.megacom.authorisationservice.services.impl;
 
-import kg.megacom.authorisationservice.dao.AccountRepository;
 import kg.megacom.authorisationservice.dao.SessionRepository;
 import kg.megacom.authorisationservice.dao.UserRepository;
 import kg.megacom.authorisationservice.exceptions.AccountNotFound;
@@ -8,10 +7,10 @@ import kg.megacom.authorisationservice.exceptions.IncorrectPassword;
 import kg.megacom.authorisationservice.exceptions.SessionByTokenNotFound;
 import kg.megacom.authorisationservice.mappers.SessionMapper;
 import kg.megacom.authorisationservice.models.dto.SessionDto;
-import kg.megacom.authorisationservice.models.entity.Account;
 import kg.megacom.authorisationservice.models.entity.Session;
 import kg.megacom.authorisationservice.models.entity.User;
 import kg.megacom.authorisationservice.services.SessionService;
+import org.mapstruct.ap.shaded.freemarker.template.utility.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +21,6 @@ import java.util.UUID;
 public class SessionServiceImpl implements SessionService {
 
     @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -33,20 +29,18 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public SessionDto signIn(String login, String password) {
 
-        Account account = accountRepository.findByLogin(login);
+        User user = userRepository.getLoginByNativeQuery(login);
 
-        if(account.equals(null)) throw new AccountNotFound("Аккаунт с именем: "+login+" не существует");
-
-        if (!account.getPassword().equals(password)) throw new IncorrectPassword("Неверный пароль");
+        if(user.getAccount().equals(null)) throw new AccountNotFound("Аккаунт с именем: "+login+" не существует");
+        if (!user.getAccount().getPassword().equals(password)) throw new IncorrectPassword("Неверный пароль");
 
         Session session = new Session();
 
-        session.setStart_date(new Date());
-        Date end_date = Date.from(session.getStart_date().toInstant().plusSeconds(600l));
-        session.setEnd_date(end_date);
-        session.setUser(userRepository.findByAccount_IdIs(account.getId()));
         String token = UUID.randomUUID().toString();
         session.setToken(token);
+        session.setStart_date(new Date());
+        session.setEnd_date(Date.from(session.getStart_date().toInstant().plusSeconds(600l)));
+        session.setUser(user);
 
         session = sessionRepository.save(session);
 
