@@ -5,6 +5,8 @@ import kg.megacom.authorisationservice.services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping(value="/v1/session")
 public class SessionController {
@@ -14,7 +16,7 @@ public class SessionController {
 
     @GetMapping("/auth")
     public SessionDto auth(@RequestParam String login, @RequestParam String password){
-        return sessionService.signIn(login,password);
+       return sessionService.signIn(login,password);
     }
 
     @GetMapping("/out")

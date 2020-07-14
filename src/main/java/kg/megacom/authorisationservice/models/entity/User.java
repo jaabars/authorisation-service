@@ -20,7 +20,7 @@ public class User {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 }

@@ -16,14 +16,12 @@ public class UserController {
 
     @PostMapping("/save")
     public UserDto save (@RequestHeader("auth") String auth, @RequestBody UserDto userDto){
-        userDto = userService.saveUser(userDto);
-        return userDto;
+        return userService.saveUser(userDto);
     }
 
     @PutMapping("/update")
     public UserDto update(@RequestHeader("auth") String auth,@RequestBody UserDto userDto){
-        userDto = userService.saveUser(userDto);
-        return userDto;
+        return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/delete/{id}")

@@ -5,6 +5,7 @@ import kg.megacom.authorisationservice.dao.UserRepository;
 import kg.megacom.authorisationservice.exceptions.AccountNotFound;
 import kg.megacom.authorisationservice.exceptions.IncorrectPassword;
 import kg.megacom.authorisationservice.exceptions.SessionByTokenNotFound;
+import kg.megacom.authorisationservice.exceptions.UserNotActive;
 import kg.megacom.authorisationservice.mappers.SessionMapper;
 import kg.megacom.authorisationservice.models.dto.SessionDto;
 import kg.megacom.authorisationservice.models.entity.Session;
@@ -33,6 +34,7 @@ public class SessionServiceImpl implements SessionService {
 
         if(user.getAccount().equals(null)) throw new AccountNotFound("Аккаунт с именем: "+login+" не существует");
         if (!user.getAccount().getPassword().equals(password)) throw new IncorrectPassword("Неверный пароль");
+        if (!user.is_active()) throw new UserNotActive("Пользователь не активен");
 
         Session session = new Session();
 
@@ -53,18 +55,21 @@ public class SessionServiceImpl implements SessionService {
     public boolean logOut(String auth) {
         Session session = sessionRepository.findByToken(auth);
         if(session.equals(null)) throw new SessionByTokenNotFound("Такой сессии не сущесуствует");
-        if(session.getEnd_date().getTime()<new Date().getTime()){
-            return false;
-        }else {
+
+        session.setEnd_date(new Date());
+        sessionRepository.save(session);
         return true;
-        }
     }
 
     @Override
     public boolean checkSession(String auth) {
         Session session = sessionRepository.findByToken(auth);
+
         if(session.equals(null)) throw new SessionByTokenNotFound("Такой сессии не сущесуствует");
+
         if(session.getEnd_date().getTime()>new Date().getTime()){
+            session.setEnd_date(Date.from(session.getEnd_date().toInstant().plusSeconds(300l)));
+            sessionRepository.save(session);
             return true;
         }else {
             return false;
