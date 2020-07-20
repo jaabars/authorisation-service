@@ -11,4 +11,6 @@ public class UserDto {
 
     private AccountDto account;
 
+    private RoleDto role;
+
 }

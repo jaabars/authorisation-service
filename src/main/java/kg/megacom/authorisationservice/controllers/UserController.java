@@ -15,27 +15,27 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/save")
-    public UserDto save (@RequestHeader("auth") String auth, @RequestBody UserDto userDto){
+    public UserDto save (@RequestParam Long naviUser, @RequestBody UserDto userDto){
         return userService.saveUser(userDto);
     }
 
     @PutMapping("/update")
-    public UserDto update(@RequestHeader("auth") String auth,@RequestBody UserDto userDto){
+    public UserDto update(@RequestParam Long naviUser,@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public boolean delete(@RequestHeader("auth") String auth,@PathVariable Long id){
+    public boolean delete(@RequestParam Long naviUser,@PathVariable Long id){
         return userService.deleteUser(id);
     }
 
     @GetMapping("/find/{id}")
-    public UserDto getById(@RequestHeader("auth") String auth,@PathVariable Long id){
+    public UserDto getById(@RequestParam Long naviUser,@PathVariable Long id){
         return userService.getUserById(id);
     }
 
     @GetMapping("/all")
-    public List<UserDto> findAllUsers(@RequestHeader("auth") String auth){
+    public List<UserDto> findAllUsers(@RequestParam Long naviUser){
         return userService.getAllUsers();
     }
 }

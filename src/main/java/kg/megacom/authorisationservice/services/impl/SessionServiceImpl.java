@@ -7,7 +7,9 @@ import kg.megacom.authorisationservice.exceptions.IncorrectPassword;
 import kg.megacom.authorisationservice.exceptions.SessionByTokenNotFound;
 import kg.megacom.authorisationservice.exceptions.UserNotActive;
 import kg.megacom.authorisationservice.mappers.SessionMapper;
+import kg.megacom.authorisationservice.mappers.UserMapper;
 import kg.megacom.authorisationservice.models.dto.SessionDto;
+import kg.megacom.authorisationservice.models.dto.UserDto;
 import kg.megacom.authorisationservice.models.entity.Session;
 import kg.megacom.authorisationservice.models.entity.User;
 import kg.megacom.authorisationservice.services.SessionService;
@@ -62,7 +64,8 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public boolean checkSession(String auth) {
+    public UserDto checkSession(String auth) {
+
         Session session = sessionRepository.findByToken(auth);
 
         if(session.equals(null)) throw new SessionByTokenNotFound("Такой сессии не сущесуствует");
@@ -70,9 +73,11 @@ public class SessionServiceImpl implements SessionService {
         if(session.getEnd_date().getTime()>new Date().getTime()){
             session.setEnd_date(Date.from(session.getEnd_date().toInstant().plusSeconds(300l)));
             sessionRepository.save(session);
-            return true;
+            User user = session.getUser();
+            UserDto userDto = UserMapper.INSTANCE.userToUserDto(user);
+            return userDto;
         }else {
-            return false;
+            return null;
         }
     }
 }

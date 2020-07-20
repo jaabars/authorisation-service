@@ -1,4 +1,4 @@
-insert into accounts (is_active, login, password) VALUES
-('true','Azi','12nk2kj');
+insert into accounts (login, password) VALUES
+('Azi','12345');
 insert into users (address, name, account_id) VALUES
-('Bish','Azi',1);
+('Bishkek','Azi',1);

@@ -1,11 +1,10 @@
 package kg.megacom.authorisationservice.controllers;
 
 import kg.megacom.authorisationservice.models.dto.SessionDto;
+import kg.megacom.authorisationservice.models.dto.UserDto;
 import kg.megacom.authorisationservice.services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 @RestController
 @RequestMapping(value="/v1/session")
@@ -24,7 +23,8 @@ public class SessionController {
         return sessionService.logOut(auth);
     }
 
-    public boolean checkSession(@RequestHeader("auth") String auth){
-        return sessionService.checkSession(auth);
+    @GetMapping("/check")
+    public UserDto checkSession(@RequestParam String token){
+        return sessionService.checkSession(token);
     }
 }
